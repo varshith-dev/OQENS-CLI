@@ -4,493 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OQENS CLI — Your Terminal, Your Community</title>
-    <meta name="description" content="The official CLI for the OQENS community. Create posts, browse feeds, and manage your account from the terminal.">
+    <meta name="description" content="The official developer CLI for OQENS. Browse feeds, create posts, and manage your account from the terminal.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --bg: #FAFAFA;
-            --white: #FFFFFF;
-            --text: #1a1a1a;
-            --muted: #6b7280;
-            --light-muted: #9ca3af;
-            --border: #e5e7eb;
-            --border-light: #f3f4f6;
-            --cyan: #0891b2;
-            --cyan-light: #ecfeff;
-            --blue: #2563eb;
-            --blue-light: #eff6ff;
-            --terminal-bg: #1e1e2e;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
-            --shadow-xl: 0 20px 60px rgba(0,0,0,0.1);
-        }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        ::selection { background: rgba(8,145,178,0.15); }
-
-        /* ========== NAV ========== */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-inner {
-            max-width: 1100px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 24px;
-        }
-        .nav-brand {
-            display: flex; align-items: center; gap: 10px;
-            font-weight: 800; font-size: 17px; text-decoration: none; color: var(--text);
-            letter-spacing: -0.02em;
-        }
-        .nav-icon {
-            width: 32px; height: 32px; border-radius: 8px;
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            display: flex; align-items: center; justify-content: center;
-        }
-        .nav-icon svg { color: #fff; }
-        .nav-links { display: flex; gap: 28px; align-items: center; }
-        .nav-links a {
-            color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text); }
-        .btn-nav {
-            background: var(--text) !important; color: #fff !important;
-            padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 13px;
-        }
-        .btn-nav:hover { opacity: 0.85; }
-
-        /* ========== HERO ========== */
-        .hero {
-            max-width: 1100px; margin: 0 auto;
-            padding: 140px 24px 60px;
-            text-align: center;
-        }
-        .hero-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 6px 16px; border-radius: 99px;
-            background: var(--cyan-light); color: var(--cyan);
-            font-size: 13px; font-weight: 600;
-            margin-bottom: 28px;
-            border: 1px solid rgba(8,145,178,0.15);
-        }
-        .hero-badge .dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: var(--cyan);
-            animation: pulse-dot 2s ease infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.5); }
-        }
-        .hero h1 {
-            font-size: clamp(38px, 5.5vw, 68px);
-            font-weight: 900; line-height: 1.08; letter-spacing: -0.04em;
-            color: var(--text);
-        }
-        .hero h1 .gradient {
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-sub {
-            font-size: 18px; color: var(--muted); line-height: 1.7;
-            max-width: 560px; margin: 20px auto 0;
-        }
-
-        /* Install Command */
-        .install-wrap {
-            max-width: 520px; margin: 36px auto 0;
-        }
-        .install-box {
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--white);
-            border: 1px solid var(--border);
-            padding: 6px 8px 6px 24px; border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            transition: box-shadow 0.3s, border-color 0.3s;
-        }
-        .install-box:hover {
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(8,145,178,0.3);
-        }
-        .install-box code {
-            font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text);
-        }
-        .install-box code .prompt { color: var(--cyan); font-weight: 700; }
-        .copy-btn {
-            background: var(--text); border: none; color: #fff;
-            padding: 10px 16px; border-radius: 12px; cursor: pointer;
-            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
-            font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
-        }
-        .copy-btn:hover { transform: scale(1.03); }
-        .copy-btn.copied { background: #059669; }
-
-        /* CTA */
-        .cta-row {
-            display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;
-        }
-        .btn-primary {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 12px 24px; background: var(--text); color: #fff;
-            border-radius: 12px; font-weight: 600; font-size: 14px;
-            text-decoration: none; transition: all 0.2s;
-        }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
-        .btn-ghost {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 12px 24px; background: transparent; color: var(--muted);
-            border-radius: 12px; font-weight: 500; font-size: 14px;
-            text-decoration: none; transition: all 0.2s;
-        }
-        .btn-ghost:hover { color: var(--text); background: var(--border-light); }
-
-        /* ========== TERMINAL SECTION ========== */
-        .terminal-section {
-            max-width: 800px; margin: 60px auto 0; padding: 0 24px;
-        }
-        .terminal {
-            border-radius: 16px;
-            background: var(--terminal-bg);
-            overflow: hidden;
-            box-shadow: var(--shadow-xl);
-        }
-        .terminal-header {
-            display: flex; align-items: center; padding: 14px 18px;
-            background: rgba(255,255,255,0.04);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .terminal-dots { display: flex; gap: 8px; }
-        .terminal-dots span { width: 12px; height: 12px; border-radius: 50%; }
-        .terminal-dots .red { background: #ff5f57; }
-        .terminal-dots .yellow { background: #febc2e; }
-        .terminal-dots .green { background: #28c840; }
-        .terminal-title {
-            margin: 0 auto; font-size: 12px; color: rgba(255,255,255,0.35);
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .terminal-body {
-            padding: 28px; font-family: 'JetBrains Mono', monospace;
-            font-size: 13px; line-height: 2; color: rgba(255,255,255,0.7);
-        }
-        .terminal-body .t-path { color: #7dd3fc; }
-        .terminal-body .t-ok { color: #86efac; }
-        .terminal-body .t-info { color: #93c5fd; }
-        .terminal-body .t-white { color: #fff; font-weight: 700; }
-        .terminal-body .t-dim { color: rgba(255,255,255,0.3); font-size: 11px; }
-        .terminal-body .t-tag { color: #67e8f9; }
-        .terminal-body .post-block {
-            margin: 6px 0 10px; padding: 14px;
-            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
-            background: rgba(255,255,255,0.02);
-        }
-        .t-cursor { animation: blink 1s step-end infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        /* ========== DIVIDER ========== */
-        .divider {
-            max-width: 1100px; margin: 0 auto;
-            padding: 100px 24px 0; text-align: center;
-        }
-        .divider h2 {
-            font-size: clamp(28px, 3.5vw, 42px);
-            font-weight: 800; letter-spacing: -0.03em;
-        }
-        .divider p {
-            font-size: 16px; color: var(--muted); margin-top: 12px; max-width: 480px; margin-left: auto; margin-right: auto;
-        }
-
-        /* ========== FEATURES ========== */
-        .features {
-            max-width: 1100px; margin: 0 auto;
-            padding: 56px 24px 100px;
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-        }
-        .feature-card {
-            padding: 32px; border-radius: 20px;
-            background: var(--white);
-            border: 1px solid var(--border);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: var(--shadow-sm);
-        }
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            border-color: rgba(8,145,178,0.2);
-        }
-        .feature-icon {
-            width: 48px; height: 48px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px;
-        }
-        .fi-cyan { background: var(--cyan-light); color: var(--cyan); }
-        .fi-blue { background: var(--blue-light); color: var(--blue); }
-        .fi-green { background: #f0fdf4; color: #16a34a; }
-        .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
-        .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
-
-        /* ========== COMMANDS SECTION ========== */
-        .commands-section {
-            max-width: 1100px; margin: 0 auto;
-            padding: 0 24px 100px;
-        }
-        .commands-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 48px;
-        }
-        .cmd-card {
-            display: flex; align-items: center; gap: 16px;
-            padding: 20px 24px; border-radius: 16px;
-            background: var(--white); border: 1px solid var(--border);
-            transition: all 0.3s; box-shadow: var(--shadow-sm);
-        }
-        .cmd-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-        .cmd-code {
-            font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
-            color: var(--cyan); white-space: nowrap;
-        }
-        .cmd-desc { font-size: 14px; color: var(--muted); }
-
-        /* ========== FOOTER ========== */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 36px 24px; text-align: center;
-            color: var(--light-muted); font-size: 13px;
-        }
-        footer a { color: var(--muted); text-decoration: none; font-weight: 500; }
-        footer a:hover { color: var(--text); }
-
-        /* ========== SCROLL ANIMATIONS ========== */
-        .reveal {
-            opacity: 0; transform: translateY(32px);
-            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .reveal.visible {
-            opacity: 1; transform: translateY(0);
-        }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.25s; }
-
-        /* Hero fade-in (immediate, not scroll-based) */
-        .fade-in {
-            opacity: 0; transform: translateY(24px);
-            animation: fadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        .fade-in-d1 { animation-delay: 0.1s; }
-        .fade-in-d2 { animation-delay: 0.25s; }
-        .fade-in-d3 { animation-delay: 0.4s; }
-        .fade-in-d4 { animation-delay: 0.55s; }
-        @keyframes fadeIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 900px) {
-            .features { grid-template-columns: 1fr; }
-            .commands-grid { grid-template-columns: 1fr; }
-            .nav-links .hide-m { display: none; }
-            .hero { padding-top: 120px; }
-        }
-        @media (max-width: 600px) {
-            .install-box code { font-size: 12px; }
-            .copy-btn span { display: none; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Nav -->
-    <nav>
-        <div class="nav-inner">
-            <a href="/" class="nav-brand">
-                <div class="nav-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                </div>
-                OQENS CLI
-            </a>
-            <div class="nav-links">
-                <a href="#features" class="hide-m">Features</a>
-                <a href="#commands" class="hide-m">Commands</a>
-                <a href="https://github.com/varshith-dev/oqens-cli" target="_blank" class="hide-m">GitHub</a>
-                <a href="https://oqens.me" class="btn-nav">Open OQENS</a>
-            </div>
+<nav>
+    <div class="nav-inner">
+        <a href="/" class="nav-brand">
+            <div class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+            OQENS CLI
+        </a>
+        <div class="nav-links">
+            <a href="#features" class="hide-m">Features</a>
+            <a href="#how-it-works" class="hide-m">How it Works</a>
+            <a href="#commands" class="hide-m">Commands</a>
+            <a href="https://github.com/varshith-dev/oqens-cli" target="_blank" class="hide-m">GitHub</a>
+            <a href="https://oqens.me" class="btn-nav">Open OQENS</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-badge fade-in">
-            <span class="dot"></span>
-            v1.2.0 — Latest Release
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-badge fade-in"><span class="dot"></span> v3.1.0 — Latest Release</div>
+    <h1 class="fade-in fd1">Your terminal.<br><span class="accent">Your community.</span></h1>
+    <p class="hero-sub fade-in fd2">Browse feeds, create posts, and manage your OQENS account — all without leaving your terminal. Fully tokenized. Zero manual setup.</p>
+
+    <div class="install-wrap fade-in fd3">
+        <div class="install-box">
+            <code><span class="prompt">$</span> npm install -g @varshith-dev/oqens</code>
+            <button class="copy-btn" id="copyBtn" onclick="copyCmd()">
+                <svg id="cpIco" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <svg id="chIco" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Copy</span>
+            </button>
         </div>
-        <h1 class="fade-in fade-in-d1">Your terminal.<br><span class="gradient">Your community.</span></h1>
-        <p class="hero-sub fade-in fade-in-d2">Browse feeds, create posts, and manage your OQENS account — all without leaving your terminal.</p>
-
-        <div class="install-wrap fade-in fade-in-d3">
-            <div class="install-box">
-                <code><span class="prompt">$</span> npm install -g @varshith-dev/oqens</code>
-                <button class="copy-btn" id="copyBtn" onclick="copyInstall()">
-                    <svg id="copyIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    <svg id="checkIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Copy</span>
-                </button>
-            </div>
-        </div>
-
-        <div class="cta-row fade-in fade-in-d4">
-            <a href="https://github.com/varshith-dev/oqens-cli" class="btn-primary" target="_blank">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                View on GitHub
-            </a>
-            <a href="https://oqens.me" class="btn-ghost">
-                Visit oqens.me →
-            </a>
-        </div>
-    </section>
-
-    <!-- Terminal -->
-    <section class="terminal-section reveal">
-        <div class="terminal">
-            <div class="terminal-header">
-                <div class="terminal-dots">
-                    <span class="red"></span>
-                    <span class="yellow"></span>
-                    <span class="green"></span>
-                </div>
-                <div class="terminal-title">oqens — zsh</div>
-            </div>
-            <div class="terminal-body">
-                <div><span class="t-path">~/projects</span> $ oqens login</div>
-                <div class="t-info">Opening browser for authentication...</div>
-                <div class="t-ok">✔ Authenticated as @varshith</div>
-                <br>
-                <div><span class="t-path">~/projects</span> $ oqens feed</div>
-                <div class="post-block">
-                    <div><span class="t-white">@varshith</span> · <span class="t-tag">DISCUSSION</span></div>
-                    <div class="t-dim">2 minutes ago</div>
-                    <div style="margin-top:6px">Just shipped the new CLI update! Login flow is seamless now 🚀</div>
-                </div>
-                <div><span class="t-path">~/projects</span> $ <span class="t-cursor">_</span></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features -->
-    <div class="divider reveal">
-        <h2 id="features">Built for developers</h2>
-        <p>Everything you need to stay connected with your community, right from the command line.</p>
     </div>
 
-    <section class="features">
-        <div class="feature-card reveal reveal-delay-1">
-            <div class="feature-icon fi-cyan">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            </div>
-            <h3>Browser-based Login</h3>
-            <p>No tokens to copy. The CLI opens your browser, authenticates, and saves your session — all in one flow.</p>
-        </div>
-        <div class="feature-card reveal reveal-delay-2">
-            <div class="feature-icon fi-blue">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-            </div>
-            <h3>Live Community Feed</h3>
-            <p>Read discussions, view code snippets, and browse the latest posts from the OQENS community in your terminal.</p>
-        </div>
-        <div class="feature-card reveal reveal-delay-3">
-            <div class="feature-icon fi-green">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-            </div>
-            <h3>Create & Interact</h3>
-            <p>Publish posts, comment on threads, and like content — the full OQENS experience in your terminal window.</p>
-        </div>
-    </section>
-
-    <!-- Commands -->
-    <div class="divider reveal">
-        <h2 id="commands">Quick commands</h2>
-        <p>Get started in seconds with these simple commands.</p>
+    <div class="cta-row fade-in fd4">
+        <a href="https://github.com/varshith-dev/oqens-cli" class="btn-primary" target="_blank">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            View on GitHub
+        </a>
+        <a href="https://oqens.me" class="btn-ghost">Visit oqens.me →</a>
     </div>
+</section>
 
-    <section class="commands-section">
-        <div class="commands-grid">
-            <div class="cmd-card reveal reveal-delay-1">
-                <div class="cmd-code">oqens login</div>
-                <div class="cmd-desc">Authenticate via browser</div>
-            </div>
-            <div class="cmd-card reveal reveal-delay-1">
-                <div class="cmd-code">oqens feed</div>
-                <div class="cmd-desc">Browse the live community feed</div>
-            </div>
-            <div class="cmd-card reveal reveal-delay-2">
-                <div class="cmd-code">oqens post create</div>
-                <div class="cmd-desc">Publish a new post</div>
-            </div>
-            <div class="cmd-card reveal reveal-delay-2">
-                <div class="cmd-code">oqens search "react"</div>
-                <div class="cmd-desc">Search posts and users</div>
-            </div>
-            <div class="cmd-card reveal reveal-delay-3">
-                <div class="cmd-code">oqens post view &lt;id&gt;</div>
-                <div class="cmd-desc">Read a post and its comments</div>
-            </div>
-            <div class="cmd-card reveal reveal-delay-3">
-                <div class="cmd-code">oqens post comment &lt;id&gt;</div>
-                <div class="cmd-desc">Reply to a discussion</div>
-            </div>
+<!-- Terminal Preview -->
+<section class="terminal-section reveal">
+    <div class="terminal">
+        <div class="term-head">
+            <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <div class="term-title">oqens — zsh</div>
         </div>
-    </section>
+        <div class="term-body">
+            <div><span class="tp">~/projects</span> $ oqens login</div>
+            <div class="ti">Opening browser for authentication...</div>
+            <div class="ts">✔ Authenticated as @varshith</div>
+            <div class="ts">✔ Secure API key generated and saved locally</div>
+            <br>
+            <div><span class="tp">~/projects</span> $ oqens feed</div>
+            <div class="post-block">
+                <div><span class="tw">@varshith</span> · <span class="tt">DISCUSSION</span></div>
+                <div class="td">2 minutes ago</div>
+                <div style="margin-top:6px">Just shipped the new CLI update! Login flow is seamless now 🚀</div>
+            </div>
+            <div><span class="tp">~/projects</span> $ oqens post create</div>
+            <div class="ti">? What type of post? › meme</div>
+            <div class="ti">? Enter post title: › My first CLI post!</div>
+            <div class="ts">✔ Post successfully published!</div>
+            <br>
+            <div><span class="tp">~/projects</span> $ <span class="cur">_</span></div>
+        </div>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 OQENS &middot; <a href="https://oqens.me">oqens.me</a> &middot; <a href="https://github.com/varshith-dev/oqens-cli" target="_blank">GitHub</a></p>
-    </footer>
+<!-- Stats Bar -->
+<section class="stats-bar reveal">
+    <div class="stat"><span class="stat-num">5</span><span class="stat-label">Commands</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-num">0</span><span class="stat-label">Manual tokens</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Automated auth</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-num">SHA-256</span><span class="stat-label">Key hashing</span></div>
+</section>
 
-    <script>
-        // Copy install command
-        function copyInstall() {
-            navigator.clipboard.writeText('npm install -g @varshith-dev/oqens');
-            const btn = document.getElementById('copyBtn');
-            document.getElementById('copyIcon').style.display = 'none';
-            document.getElementById('checkIcon').style.display = 'block';
-            btn.classList.add('copied');
-            btn.querySelector('span').textContent = 'Copied!';
-            setTimeout(() => {
-                document.getElementById('copyIcon').style.display = 'block';
-                document.getElementById('checkIcon').style.display = 'none';
-                btn.classList.remove('copied');
-                btn.querySelector('span').textContent = 'Copy';
-            }, 2000);
-        }
+<!-- Features -->
+<section class="section-header reveal" id="features">
+    <h2>Built for developers</h2>
+    <p>Everything you need to stay connected with your community, right from the command line.</p>
+</section>
+<section class="features">
+    <div class="fcard reveal rd1">
+        <div class="ficon fi-cyan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></div>
+        <h3>Automated Browser Login</h3>
+        <p>No tokens to copy. The CLI opens your browser, authenticates via OAuth, and securely saves a hashed API key — all automatically.</p>
+    </div>
+    <div class="fcard reveal rd2">
+        <div class="ficon fi-blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
+        <h3>Live Community Feed</h3>
+        <p>Read discussions, view code snippets, and browse the latest posts from the OQENS community directly in your terminal.</p>
+    </div>
+    <div class="fcard reveal rd3">
+        <div class="ficon fi-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <h3>Create & Interact</h3>
+        <p>Publish posts, comment on threads, and like content — the full OQENS experience without leaving your IDE.</p>
+    </div>
+    <div class="fcard reveal rd1">
+        <div class="ficon fi-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Secure Token Storage</h3>
+        <p>API keys are SHA-256 hashed before storage. Your raw credentials never persist on disk or in transit after initial handoff.</p>
+    </div>
+    <div class="fcard reveal rd2">
+        <div class="ficon fi-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <h3>Search Everything</h3>
+        <p>Find posts by keyword, discover users, and explore trending discussions across the entire OQENS platform.</p>
+    </div>
+    <div class="fcard reveal rd3">
+        <div class="ficon fi-cyan"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <h3>Cross-platform</h3>
+        <p>Works on Windows, macOS, and Linux. Built with Node.js so it runs wherever npm runs.</p>
+    </div>
+</section>
 
-        // Intersection Observer for scroll animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+<!-- How it Works -->
+<section class="section-header reveal" id="how-it-works">
+    <h2>How it works</h2>
+    <p>Three steps to get up and running. No configuration files, no environment variables.</p>
+</section>
+<section class="steps">
+    <div class="step reveal rd1">
+        <div class="step-num">1</div>
+        <div class="step-content">
+            <h3>Install globally</h3>
+            <p>Run <code>npm install -g @varshith-dev/oqens</code> to make the <code>oqens</code> command available system-wide.</p>
+        </div>
+    </div>
+    <div class="step-line reveal"></div>
+    <div class="step reveal rd2">
+        <div class="step-num">2</div>
+        <div class="step-content">
+            <h3>Authenticate</h3>
+            <p>Run <code>oqens login</code>. Your browser opens, you sign in, and a secure API key is generated and saved automatically.</p>
+        </div>
+    </div>
+    <div class="step-line reveal"></div>
+    <div class="step reveal rd3">
+        <div class="step-num">3</div>
+        <div class="step-content">
+            <h3>Start using</h3>
+            <p>You're in. Browse feeds, create posts, search the platform — everything works with your secure token.</p>
+        </div>
+    </div>
+</section>
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    </script>
+<!-- Commands Reference -->
+<section class="section-header reveal" id="commands">
+    <h2>Command reference</h2>
+    <p>Simple, memorable commands designed for speed.</p>
+</section>
+<section class="cmd-section">
+    <div class="cmd-grid">
+        <div class="cmd reveal rd1"><div class="cmd-code">oqens login</div><div class="cmd-desc">Authenticate via browser</div></div>
+        <div class="cmd reveal rd1"><div class="cmd-code">oqens logout</div><div class="cmd-desc">Clear saved credentials</div></div>
+        <div class="cmd reveal rd2"><div class="cmd-code">oqens feed</div><div class="cmd-desc">Browse the live feed</div></div>
+        <div class="cmd reveal rd2"><div class="cmd-code">oqens feed --table</div><div class="cmd-desc">Feed in table format</div></div>
+        <div class="cmd reveal rd3"><div class="cmd-code">oqens post create</div><div class="cmd-desc">Publish a new post</div></div>
+        <div class="cmd reveal rd3"><div class="cmd-code">oqens post view &lt;id&gt;</div><div class="cmd-desc">Read a specific post</div></div>
+        <div class="cmd reveal rd1"><div class="cmd-code">oqens post comment &lt;id&gt;</div><div class="cmd-desc">Reply to a discussion</div></div>
+        <div class="cmd reveal rd1"><div class="cmd-code">oqens post like &lt;id&gt;</div><div class="cmd-desc">Like a post</div></div>
+        <div class="cmd reveal rd2"><div class="cmd-code">oqens search posts "query"</div><div class="cmd-desc">Search posts by keyword</div></div>
+        <div class="cmd reveal rd2"><div class="cmd-code">oqens search users "query"</div><div class="cmd-desc">Find users</div></div>
+    </div>
+</section>
+
+<!-- Security Section -->
+<section class="section-header reveal">
+    <h2>Security first</h2>
+    <p>Your credentials are handled with the same care as production infrastructure.</p>
+</section>
+<section class="security reveal">
+    <div class="sec-card">
+        <div class="sec-icon">🔐</div>
+        <h3>SHA-256 Hashed Keys</h3>
+        <p>API keys are hashed before database storage. Even if the database is compromised, raw keys cannot be recovered.</p>
+    </div>
+    <div class="sec-card">
+        <div class="sec-icon">🌐</div>
+        <h3>OAuth Browser Flow</h3>
+        <p>Authentication happens in your browser over HTTPS. The CLI never sees or stores your password.</p>
+    </div>
+    <div class="sec-card">
+        <div class="sec-icon">🔑</div>
+        <h3>Scoped API Keys</h3>
+        <p>CLI tokens have limited scopes (read, write, cli). They cannot access admin functions or modify account settings.</p>
+    </div>
+    <div class="sec-card">
+        <div class="sec-icon">⏱️</div>
+        <h3>Auto Key Rotation</h3>
+        <p>Each login generates a fresh API key. Old keys are tracked with last-used timestamps for easy auditing.</p>
+    </div>
+</section>
+
+<!-- Bottom CTA -->
+<section class="bottom-cta reveal">
+    <h2>Ready to try it?</h2>
+    <p>Install in one command. No config needed.</p>
+    <div class="install-wrap">
+        <div class="install-box">
+            <code><span class="prompt">$</span> npm install -g @varshith-dev/oqens</code>
+            <button class="copy-btn" onclick="copyCmd()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>Copy</span></button>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 OQENS &middot; <a href="https://oqens.me">oqens.me</a> &middot; <a href="https://github.com/varshith-dev/oqens-cli" target="_blank">GitHub</a> &middot; v3.1.0</p>
+</footer>
+
+<script>
+function copyCmd(){
+    navigator.clipboard.writeText('npm install -g @varshith-dev/oqens');
+    var b=document.getElementById('copyBtn');if(!b)return;
+    var ci=document.getElementById('cpIco'),ch=document.getElementById('chIco'),s=b.querySelector('span');
+    if(ci)ci.style.display='none';if(ch)ch.style.display='block';
+    b.classList.add('copied');if(s)s.textContent='Copied!';
+    setTimeout(function(){if(ci)ci.style.display='block';if(ch)ch.style.display='none';b.classList.remove('copied');if(s)s.textContent='Copy';},2000);
+}
+var obs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('visible');});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
+</script>
 </body>
 </html>
