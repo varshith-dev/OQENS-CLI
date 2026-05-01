@@ -1,7 +1,7 @@
 {
   "name": "@varshith-dev/oqens",
-  "version": "1.1.0",
-  "description": "Enterprise CLI for the OQENS community platform",
+  "version": "1.2.0",
+  "description": "Developer CLI for the OQENS community platform",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
