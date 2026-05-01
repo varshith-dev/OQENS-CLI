@@ -1,6 +1,6 @@
 {
   "name": "@varshith-dev/oqens",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "description": "Developer CLI for the OQENS community platform",
   "main": "index.js",
   "scripts": {

@@ -65,16 +65,16 @@ program
                 res.writeHead(200, { 'Content-Type': 'text/html' });
                 res.end(`
                     <html>
-                        <body style="font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background: #fafafa; color: #111;">
-                            <div style="text-align: center; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                                <h1 style="color: #10b981; margin-bottom: 10px;">Login Successful!</h1>
-                                <p>You have successfully authenticated the OQENS CLI.</p>
-                                <p style="color: #666; font-size: 14px;">Redirecting you back in a moment...</p>
+                        <body style="font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; background: #fafafa; color: #111; margin: 0;">
+                            <div style="text-align: center; background: white; padding: 48px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); max-width: 420px;">
+                                <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                                <h1 style="color: #0891b2; margin-bottom: 8px; font-size: 24px;">Authenticated!</h1>
+                                <p style="color: #555; font-size: 15px; line-height: 1.6;">You can close this tab and return to your terminal. The CLI is ready to use.</p>
+                                <p style="color: #999; font-size: 12px; margin-top: 16px;">This window will close automatically...</p>
                             </div>
                             <script>
-                                setTimeout(() => {
-                                    window.location.href = 'https://cli.oqens.me';
-                                }, 2500);
+                                setTimeout(() => { window.close(); }, 1500);
+                                setTimeout(() => { window.location.href = 'https://cli.oqens.me'; }, 3000);
                             </script>
                         </body>
                     </html>
