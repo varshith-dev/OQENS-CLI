@@ -1,6 +1,13 @@
 {
     "buildCommand": null,
     "outputDirectory": "public",
+    "redirects": [
+        {
+            "source": "/login",
+            "destination": "https://oqens.me/login",
+            "permanent": false
+        }
+    ],
     "rewrites": [
         {
             "source": "/(.*)",

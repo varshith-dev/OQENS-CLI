@@ -68,7 +68,7 @@ authCommand
         });
 
         server.listen(PORT, async () => {
-            const loginUrl = `https://cli.oqens.me/login?returnTo=${encodeURIComponent(`http://localhost:${PORT}/callback`)}`;
+            const loginUrl = `https://oqens.me/login?returnTo=${encodeURIComponent(`http://localhost:${PORT}/callback`)}`;
             await open(loginUrl);
         });
 
